@@ -90,8 +90,8 @@ def fit_parameters(
         {
             "max_delta_step": [0, 5, 30, 100, 300, 500],
             "min_child_weight": [0.001, 0.1, 1, 5, 10, 20],
-            "min_samples_split": [0.0, 0.01, 0.1, 0.3, 0.5, 0.7, 1.0],
-            "min_samples_leaf": [0.0, 0.01, 0.1, 0.3, 0.5, 0.7, 1.0],
+            "min_samples_split": [0.001, 0.01, 0.1, 0.3, 0.5, 0.7, 1.0],
+            "min_samples_leaf": [0.001, 0.01, 0.1, 0.3, 0.5],
             "num_leaves" : [15, 30, 70, 100, 150, 200, 300]
         },
         {
@@ -102,7 +102,7 @@ def fit_parameters(
         {
             "reg_alpha": [1e-5, 1e-2, 0.1, 1, 25, 100],
             "reg_lambda": [1e-5, 1e-2, 0.1, 1, 25, 100],
-            "alpha": [0.0, 0.01, 0.1, 0.3, 0.5, 0.7, 1.0],
+            "alpha": [0.001, 0.01, 0.1, 0.3, 0.5, 0.7, 0.9],
             "ccp_alpha": [0, 10, 50, 100, 300, 1000]
         },
     ]
@@ -170,9 +170,9 @@ if __name__ == "__main__":
         pred_.iloc[:, -1]
     )
 
-    table = """| Regressor | RMSE |\n| --- | --- |\n"""
-
-    table += '| bare **XGBRegressor** |'
+    table = """| Regressor | RMSE bare | RMSE more trees only | RMSE autotuned |\n"""
+    table += """| --- | --- | --- | --- |\n"""
+    table += '| **XGBRegressor** |'
 
     model = xgboost.XGBRegressor()
     model.fit(X, Y, eval_metric='rmse')
@@ -180,8 +180,15 @@ if __name__ == "__main__":
     Y2_pred = model.predict(X2)
     RMSE = mean_squared_error(Y2_pred, Y2)
 
-    table += ' %.5f |\n' % RMSE
-    table += '| autotuned **XGBRegressor** |'
+    table += ' %.6f |' % RMSE
+
+    model = xgboost.XGBRegressor(n_estimators = 500)
+    model.fit(X, Y, eval_metric='rmse')
+
+    Y2_pred = model.predict(X2)
+    RMSE = mean_squared_error(Y2_pred, Y2)
+
+    table += ' %.6f |' % RMSE
 
     accuracy = make_scorer(mean_squared_error, greater_is_better=False)
     fitted_model = fit_parameters(model = xgboost.XGBRegressor(), X_train = X, y_train = Y, scoring=accuracy, n_folds=2)    
@@ -189,10 +196,9 @@ if __name__ == "__main__":
     Y2_pred = fitted_model.predict(X2)
     RMSE = mean_squared_error(Y2_pred, Y2)
 
-    table += ' %.5f |\n' % RMSE
+    table += ' %.6f |\n' % RMSE
 
-
-    table += "| bare **GradientBoostingRegressor** |"
+    table += "| **GradientBoostingRegressor** |"
 
     model = GradientBoostingRegressor()
     model.fit(X, Y)  # , eval_metric='rmse')
@@ -200,8 +206,15 @@ if __name__ == "__main__":
     Y2_pred = model.predict(X2)
     RMSE = mean_squared_error(Y2_pred, Y2)
 
-    table += " %.5f |\n" % RMSE
-    table += "| autotuned **GradientBoostingRegressor** |"
+    table += " %.6f |" % RMSE
+
+    model = GradientBoostingRegressor(n_estimators = 500)
+    model.fit(X, Y)
+
+    Y2_pred = model.predict(X2)
+    RMSE = mean_squared_error(Y2_pred, Y2)
+
+    table += ' %.6f |' % RMSE
 
     accuracy = make_scorer(mean_squared_error, greater_is_better=False)
     fitted_model = fit_parameters(
@@ -215,19 +228,25 @@ if __name__ == "__main__":
     Y2_pred = fitted_model.predict(X2)
     RMSE = mean_squared_error(Y2_pred, Y2)
 
-    table += " %.5f |\n" % RMSE
+    table += " %.6f |\n" % RMSE
 
+    table += "| **LGBMRegressor** |"
 
-    table += "| bare **LGBMRegressor** |"
-
-    model = lightgbm.LGBMRegressor()
+    model = lightgbm.LGBMRegressor(verbose=-1)
     model.fit(X, Y)  # , eval_metric='rmse')
 
     Y2_pred = model.predict(X2)
     RMSE = mean_squared_error(Y2_pred, Y2)
 
-    table += " %.5f |\n" % RMSE
-    table += "| autotuned **LGBMRegressor** |"
+    table += " %.6f |" % RMSE
+
+    model = lightgbm.LGBMRegressor(verbose=-1, n_estimators = 500)
+    model.fit(X, Y)
+
+    Y2_pred = model.predict(X2)
+    RMSE = mean_squared_error(Y2_pred, Y2)
+
+    table += ' %.6f |' % RMSE
 
     accuracy = make_scorer(mean_squared_error, greater_is_better=False)
     fitted_model = fit_parameters(
@@ -241,7 +260,7 @@ if __name__ == "__main__":
     Y2_pred = fitted_model.predict(X2)
     RMSE = mean_squared_error(Y2_pred, Y2)
 
-    table += " %.5f |\n" % RMSE
+    table += " %.6f |\n" % RMSE
 
     """
     table += "| bare **CatBoostRegressor** |"

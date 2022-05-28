@@ -29,11 +29,8 @@ Y2_pred = fitted_model.predict(X2)
 
 ## Test results
 
-| Regressor | RMSE |
-| --- | --- |
-| bare **XGBRegressor** | 0.00051 |
-| autotuned **XGBRegressor** | 0.00022 |
-| bare **GradientBoostingRegressor** | 0.00066 |
-| autotuned **GradientBoostingRegressor** | 0.00017 |
-| bare **LGBMRegressor** | 0.00033 |
-| autotuned **LGBMRegressor** | 0.00015 |
+| Regressor | RMSE bare | RMSE more trees only | RMSE autotuned |
+| --- | --- | --- | --- |
+| **XGBRegressor** | 0.000511 | 0.000493 | 0.000218 |
+| **GradientBoostingRegressor** | 0.000662 | 0.000100 | 0.000547 |
+| **LGBMRegressor** | 0.000333 | 0.000181 | 0.000149 |
