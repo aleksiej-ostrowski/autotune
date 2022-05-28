@@ -1,0 +1,8 @@
+| Regressor | RMSE |
+| --- | --- |
+| bare **XGBRegressor** | 0.00051 |
+| autotuned **XGBRegressor** | 0.00022 |
+| bare **GradientBoostingRegressor** | 0.00066 |
+| autotuned **GradientBoostingRegressor** | 0.00017 |
+| bare **LGBMRegressor** | 0.00033 |
+| autotuned **LGBMRegressor** | 0.00015 |
