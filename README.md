@@ -1,4 +1,5 @@
-This experimental version for auto-tuning is based on script by Sylwia Mielnicka https://github.com/SylwiaOliwia2/xgboost-AutoTune 
+This experimental version for auto-tuning is based 
+on script by Sylwia Mielnicka https://github.com/SylwiaOliwia2/xgboost-AutoTune 
 
 # AutoTune for regressors
 Package allows for auto-tuning `XGBRegressor`, `GradientBoostingRegressor` and `LGBMRegressor` parameters. Model usues `GridSearchCV`. Tested for Python 3.8.10
@@ -19,13 +20,12 @@ fitted_model = fit_parameters(model = xgboost.XGBRegressor(), X_train = X, y_tra
 Y2_pred = fitted_model.predict(X2)
 ```
 
-### Parameters:
+### Parameters
 
 * **X_train** - pandas DataFrame, input variables.
 * **y_train** - pandas series, value for prediction.
 * **scoring** - used to evaluate the best model.
 * **n_folds** - number of folds used in GridSearchCV.
-
 
 ## Test results
 
