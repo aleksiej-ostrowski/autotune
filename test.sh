@@ -1,1 +1,1 @@
-python3 autotune.py
+time python3 autotune.py
