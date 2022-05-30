@@ -126,13 +126,14 @@ def fit_parameters(model, X_train, y_train, scoring, n_folds=5, seed=42):
         probe.append((res.best_score_, res.best_params_))
         union.update(res.best_params_)
 
+        if len(union) > 2:
+            model.set_params(**union)
+            model.fit(X_train, y_train)
+
+            new_score = scoring._score_func(model.predict(X_train), y_train)
+            probe.append((new_score, model.get_params()))
+
     # print(union)
-
-    model.set_params(**union)
-    model.fit(X_train, y_train)
-
-    new_score = scoring._score_func(model.predict(X_train), y_train)
-    probe.append((new_score, model.get_params()))
 
     print(probe)
 
@@ -142,9 +143,10 @@ def fit_parameters(model, X_train, y_train, scoring, n_folds=5, seed=42):
         else min(probe, key=lambda x: abs(x[0]))
     )
 
-    if not math.isclose(the_best_score, abs(new_score), rel_tol=1e-6):
-        model.set_params(**the_best_params)
-        model.fit(X_train, y_train)
+    # if not math.isclose(the_best_score, abs(new_score), rel_tol=1e-6):
+
+    model.set_params(**the_best_params)
+    model.fit(X_train, y_train)
 
     print(f"Regressor {regressor}, the best: {model.get_params()}")
 
@@ -178,7 +180,7 @@ if __name__ == "__main__":
         pred_.iloc[:, -1]
     )
 
-    table = """| Regressor | RMSE bare | RMSE more trees instead | RMSE autotuned |\n"""
+    table = """| Regressor | RMSE, bare | RMSE, more trees instead | RMSE, autotuned |\n"""
     table += """| --- | --- | --- | --- |\n"""
 
     table += "| **XGBRegressor** |"
@@ -206,14 +208,13 @@ if __name__ == "__main__":
         y_train=Y,
         scoring=accuracy,
         n_folds=3,
-        seed=42,
+        seed=100,
     )
 
     Y2_pred = fitted_model.predict(X2)
     RMSE = mean_squared_error(Y2_pred, Y2)
 
     table += " %.6f |\n" % RMSE
-
 
     table += "| **GradientBoostingRegressor** |"
 
@@ -242,7 +243,7 @@ if __name__ == "__main__":
         y_train=Y,
         scoring=accuracy,
         n_folds=3,
-        seed=42,
+        seed=100,
     )
 
     Y2_pred = fitted_model.predict(X2)
@@ -275,14 +276,13 @@ if __name__ == "__main__":
         y_train=Y,
         scoring=accuracy,
         n_folds=3,
-        seed=42,
+        seed=100,
     )
 
     Y2_pred = fitted_model.predict(X2)
     RMSE = mean_squared_error(Y2_pred, Y2)
 
     table += " %.6f |\n" % RMSE
-
 
     """
     table += "| bare **CatBoostRegressor** |"
