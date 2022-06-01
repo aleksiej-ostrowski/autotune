@@ -9,7 +9,7 @@ You need to define scoring. The easier way is using `sklearn.metrics.make_scorer
 
 ## Fast run
 
-```
+```python
 import xgboost
 from sklearn.metrics import make_scorer, mean_squared_error
 from autotune import fit_parameters
@@ -29,7 +29,7 @@ Y2_pred = fitted_model.predict(X2)
 
 ## Fast run test
 
-```
+```bash
 bash test.sh
 ```
 
